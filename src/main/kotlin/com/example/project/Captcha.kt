@@ -9,6 +9,7 @@ import java.io.File
 import java.io.FileOutputStream
 
 import java.io.OutputStream
+import java.nio.charset.Charset
 import java.nio.file.Paths
 import java.time.Instant
 import java.util.*
@@ -45,7 +46,12 @@ class Captcha {
         if (!File(filepath).exists()) {
             File(filepath).mkdirs()
         }
-        return "${filepath}${captchaStr.replace("=", "")}_${timestamp}${filesuffix}"
+        // 为了文件名合法
+        val filename = captchaStr.replace("=", "")
+            .replace("+", "add")
+            .replace("-", "sub")
+            .replace("*", "mul")
+        return "${filepath}${filename}_${timestamp}${filesuffix}"
     }
 
     fun writeImage(cage: Cage, captchaStr: String) {
@@ -54,7 +60,11 @@ class Captcha {
             .replace("-", arrayOf("-", "减").random())
             .replace("*", arrayOf("×", "x", "乘").random())
             .replace("=", arrayOf("=", "等于").random())
-        val os: OutputStream = FileOutputStream(Paths.get(filename(captchaStr)).toString(), false)
+        val os: OutputStream =
+            FileOutputStream(
+                Paths.get(filename(captchaStr)).toString(),
+                false
+            )
         cage.draw(realCaptcha, os)
     }
 }
