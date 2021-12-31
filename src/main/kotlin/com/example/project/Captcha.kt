@@ -5,19 +5,13 @@ import com.github.cage.ObjectRoulette
 import com.github.cage.image.EffectConfig
 import com.github.cage.image.Painter
 import java.awt.Font
+import java.io.File
 import java.io.FileOutputStream
 
 import java.io.OutputStream
 import java.nio.file.Paths
 import java.time.Instant
 import java.util.*
-
-fun main() {
-    val captcha = Captcha()
-    for (i in 1..10) {
-        captcha.writeImage(captcha.casCage(), captcha.captchaStr())
-    }
-}
 
 class Captcha {
     fun casCage(): Cage {
@@ -47,6 +41,10 @@ class Captcha {
         val filepath = "./datasets/train/"
         val timestamp = Instant.now().toEpochMilli()
         val filesuffix = ".png"
+        // 目录不存在则创建
+        if (!File(filepath).exists()) {
+            File(filepath).mkdirs()
+        }
         return "${filepath}${captchaStr.replace("=", "")}_${timestamp}${filesuffix}"
     }
 
